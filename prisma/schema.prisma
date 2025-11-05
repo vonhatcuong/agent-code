@@ -15,8 +15,46 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  name  String?
+  id           Int           @id @default(autoincrement())
+  name         String?
+  email        String?       @unique
+  createdAt    DateTime      @default(now())
+  images       Image[]
+  videoPrompts VideoPrompt[]
+}
+
+model Image {
+  id           String        @id @default(cuid())
+  url          String
+  filename     String
+  mimeType     String
+  size         Int
+  width        Int?
+  height       Int?
+  uploadedAt   DateTime      @default(now())
+  userId       Int?
+  user         User?         @relation(fields: [userId], references: [id])
+  videoPrompts VideoPrompt[]
+
+  @@index([userId])
+}
+
+model VideoPrompt {
+  id          String   @id @default(cuid())
+  imageId     String
+  image       Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  prompt      String   @db.Text
+  style       String?
+  duration    String?
+  motion      String?
+  cameraAngle String?
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  userId      Int?
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@index([imageId])
+  @@index([userId])
 }
 
 model Post {

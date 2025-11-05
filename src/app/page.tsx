@@ -1,21 +1,18 @@
-import { getQueryClient } from '@/trpc/server';
-import { trpc } from '@/trpc/server';
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { Client } from './client';
 import { Suspense } from 'react';
 
 const Page = async () => {
-    const queryClient = getQueryClient();
-    await queryClient.prefetchQuery(
-        trpc.createAI.queryOptions({ text: 'Cuong 1 PREFETCH' }),
-    );
-
     return (
-        <HydrationBoundary state={dehydrate(queryClient)}>
-            <Suspense fallback={<p>Loading...</p>}>
-                <Client />
-            </Suspense>
-        </HydrationBoundary>
+        <Suspense fallback={
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="text-center">
+                    <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+                    <p className="text-muted-foreground">Đang tải...</p>
+                </div>
+            </div>
+        }>
+            <Client />
+        </Suspense>
     );
 };
 
